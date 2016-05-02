@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
   
-  before_action :set_user, only: [:edit, :update, :destroy]
+  before_action :set_user, only: [:edit, :update]
+  before_action :logged_in_user, only: [:edit, :update]
+  before_action :me?, only: [:edit, :update]
 
   def show 
    @user = User.find(params[:id])
@@ -20,11 +22,9 @@ class UsersController < ApplicationController
     end
   end
 
-  #追加しました。by suzuki
   def edit
   end
   
-  #追加しました。by suzuki
   def update
     if @user.update(user_params)
       #保存に成功した場合はトップページへリダイレクト
@@ -44,6 +44,12 @@ class UsersController < ApplicationController
 
   def set_user
      @user = User.find(params[:id])
+  end
+
+  def me?
+    if current_user.id != params[:id].to_i
+      redirect_to root_path
+    end
   end
 
 end
